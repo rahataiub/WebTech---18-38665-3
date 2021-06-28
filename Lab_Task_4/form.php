@@ -1,36 +1,80 @@
 
 <?php  
+
+$errorname = $erroremail = $errorun= $errorpass = $errorcp = $errorgender= $errordob= "";
+$name = $email = $un = $pass = $cp = $gender = $dob = "";
  $message = '';  
  $error = '';  
- if(isset($_POST["submit"]))  
- {  
-      if(empty($_POST["name"]))  
-      {  
-           $error = "<label class='text-danger'>Enter Name</label>";  
-      }
-      else if(empty($_POST["email"]))  
-      {  
-           $error = "<label class='text-danger'>Enter an e-mail</label>";  
-      }  
-      else if(empty($_POST["un"]))  
-      {  
-           $error = "<label class='text-danger'>Enter a username</label>";  
-      }  
-      else if(empty($_POST["pass"]))  
-      {  
-           $error = "<label class='text-danger'>Enter a password</label>";  
-      }
-      else if(empty($_POST["Cpass"]))  
-      {  
-           $error = "<label class='text-danger'>Confirm password field cannot be empty</label>";  
-      } 
-      else if(empty($_POST["gender"]))  
-      {  
-           $error = "<label class='text-danger'>Gender cannot be empty</label>";  
-      } 
-       
-      else  
-      {  
+$flag=true; 
+ 
+ if ($_SERVER["REQUEST_METHOD"] == "POST")  
+   
+       {
+        if (empty($_POST["un"])) {
+            $errorun = " * uname is required";
+			$flag=false; 
+        } else {
+            $un = test_input($_POST["un"]);
+            
+            if (!preg_match("/^[a-zA-Z_]{2,}$/",$un)) {
+            $errorun = " * Username must be valid";
+            }
+        }
+        if (empty($_POST["pass"])) {
+            $errorpass = " * password is required";
+			$flag=false;
+        } else {
+            $pass = test_input($_POST["pass"]);
+    
+	  } 
+	  
+	  
+        if (empty($_POST["name"])) {
+            $errorname = " * name is required";
+			$flag=false;
+        } else {
+            $name = test_input($_POST["name"]);
+            
+            if (!preg_match("/^[a-zA-Z_]{2,}$/",$name)) {
+            $errorname = " * give a valid name";
+            }
+        }
+        if (empty($_POST["email"])) {
+            $erroremail = " * mail is required";
+			$flag=false;
+        } else {
+            $email = test_input($_POST["email"]);
+            
+            if (!preg_match("/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/ix",$email)) {
+            $erroremail = " * email must be @gmail.com at the end";
+            }
+        } 
+	  
+	  
+        if (empty($_POST["cp"])) {
+            $errorcp = " * confirm pass is required";
+			$flag=false;
+        } else {
+            $cp = test_input($_POST["cp"]);
+            
+        }
+		
+        if (empty($_POST["gender"])) {
+            $errorgender = " * Gender is required";
+			$flag=false;
+        } else {
+            $gender = test_input($_POST["gender"]);
+            
+        }
+	  
+	  
+	  
+	  }    
+   
+     if ($flag==true) 
+{
+    if(isset($_POST["submit"]))  
+    {
            if(file_exists('data.json'))  
            {  
                 $current_data = file_get_contents('data.json');  
@@ -56,6 +100,13 @@
            }  
       }  
  }  
+function test_input($data) 
+{
+  $data = trim($data);
+  $data = stripslashes($data);
+  $data = htmlspecialchars($data);
+  return $data;
+} 
  ?>  
  <!DOCTYPE html>  
  <html>  
@@ -81,15 +132,15 @@
                      ?>  
                      <br />  
                      <label>Name :</label> 
-                     <input type="text" name="name" class="form-control" /><br />  <hr>
+                     <input type="text" name="name" class="form-control" /><?php echo $errorname;?><br />  <hr>
                      <label>E-mail :</label>
-                     <input type="text" name = "email" class="form-control" /><br /><hr>
+                     <input type="text" name = "email" class="form-control" /><?php echo $erroremail;?><br /><hr>
                      <label>User Name :</label>
-                     <input type="text" name = "un" class="form-control" /><br /><hr>
+                     <input type="text" name = "un" class="form-control" /><?php echo $errorun;?><br /><hr>
                      <label>Password :</label>
-                     <input type="password" name = "pass" class="form-control" /><br /><hr>
+                     <input type="password" name = "pass" class="form-control" /><?php echo $errorpass;?><br /><hr>
                      <label>Confirm Password :</label>
-                     <input type="password" name = "Cpass" class="form-control" /><br /><hr>
+                     <input type="password" name = "Cpass" class="form-control" /><?php echo $errorcp;?><br /><hr>
 
                     <fieldset>
                     <legend>Gender</legend>
@@ -99,7 +150,7 @@
                      <label for="female">Female</label>
                      <input type="radio" id="other" name="gender" value="other">
                      <label for="other">Other</label><br>
-					 </fieldset>
+					 </fieldset><?php echo $errorgender;?>
 					 <hr>
 					  <fieldset>
                      <legend>Date of Birth:</legend>
